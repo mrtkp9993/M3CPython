@@ -17,6 +17,7 @@ class M3CData:
         series_data = series.iloc[6:].dropna().values
         series_index = pd.date_range(
             start=f"{series.iloc[4]}/{series.iloc[5]}", periods=series_length, freq='YS')
+        series_index.name = 'id'
         return {'series_name': series_name, 'series_category': series_category, 'series_df': pd.DataFrame(series_data, index=series_index, columns=[series_name])}
 
     def __process_month(self, series):
@@ -29,6 +30,7 @@ class M3CData:
                 start=f"{series.iloc[4]}/{series.iloc[5]}", periods=series_length, freq='MS')
         else:
             series_index = pd.RangeIndex(start=0, stop=series_length, step=1)
+        series_index.name = 'id'
         return {'series_name': series_name, 'series_category': series_category, 'series_df': pd.DataFrame(series_data, index=series_index, columns=[series_name])}
 
     def __process_quart(self, series):
@@ -38,13 +40,16 @@ class M3CData:
         series_data = series.iloc[6:].dropna().values
         series_index = pd.date_range(
             start=f"{series.iloc[4]}/{series.iloc[5]}", periods=series_length, freq='QS')
+        series_index.name = 'id'
         return {'series_name': series_name, 'series_category': series_category, 'series_df': pd.DataFrame(series_data, index=series_index, columns=[series_name])}
 
     def __process_other(self, series):
         series_name = series.iloc[0].replace(' ', '')
         series_category = series.iloc[3].strip()
         series_data = series.iloc[6:].dropna().values
-        return {'series_name': series_name, 'series_category': series_category, 'series_df': pd.DataFrame(series_data, columns=[series_name])}
+        series_df = pd.DataFrame(series_data, columns=[series_name])
+        series_df.index.name = 'id'
+        return {'series_name': series_name, 'series_category': series_category, 'series_df': series_df}
 
     def __process(self):
 
